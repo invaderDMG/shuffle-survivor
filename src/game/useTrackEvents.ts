@@ -3,7 +3,7 @@ import { useGame } from './GameProvider';
 import { dbg } from '../utils/debug';
 
 export function useTrackEvents(player: Spotify.Player | null) {
-  const { dispatch } = useGame();
+  const { dispatch, state } = useGame();
 
   useEffect(() => {
     if (!player) return;
@@ -53,4 +53,18 @@ export function useTrackEvents(player: Spotify.Player | null) {
       player.removeListener('player_state_changed', handlePlayerStateChanged);
     };
   }, [player, dispatch]);
+
+  useEffect(() => {
+    if (!player) return;
+
+    if (state.status === 'game-over') {
+      dbg('🛑 Game over - stopping music playback');
+      // Pause the player immediately
+      player.disconnect().then(() => {
+        dbg('⏸️ Music paused successfully on game over');
+      }).catch((err) => {
+        dbg('❌ Error pausing music on game over', err);
+      });
+    }
+  }, [player, state.status]);
 }

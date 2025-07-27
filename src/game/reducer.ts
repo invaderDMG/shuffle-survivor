@@ -44,6 +44,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       };
     }
     case 'TICK':
+      if (state.status !== 'playing') return state;
       return { ...state, elapsedMs: state.elapsedMs + action.dtMs };
     case 'RESET':
       return { ...initialState };

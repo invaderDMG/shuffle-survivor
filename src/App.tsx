@@ -6,6 +6,7 @@ import PlayerProvider from './spotify/PlayerProvider';
 import GameProvider from './game/GameProvider';
 import HUD from './components/HUD/HUD';
 import SkipControls from './components/HUD/SkipControls';
+import { dbg } from './utils/debug';
 import './App.css';
 
 function App() {
@@ -45,8 +46,23 @@ function App() {
 }
 
 function GameInterface() {
-  const { state } = useGame();
+  const { state, dispatch } = useGame();
   const { gameReady, playlistReady, startPlayback, canStartGame } = useStartGame();
+
+  // Function to start a completely new game
+  const startNewGame = () => {
+    dbg('🔄 Starting completely new game');
+    
+    // Reset all game state
+    dispatch({ type: 'RESET' });
+    
+    // Clear session storage game data
+    sessionStorage.removeItem('game_playlist_uri');
+    sessionStorage.removeItem('playlist_name');
+    
+    // Reload the page to restart everything fresh
+    window.location.reload();
+  };
 
   // Show "Start Game" button to get user interaction
   if (playlistReady && !gameReady) {
@@ -54,10 +70,19 @@ function GameInterface() {
       <div className="app">
         <header className="app-header">
           <h1>🎵 Shuffle Survivor</h1>
-          <p>Game is ready! Click to start playing music.</p>
           <button onClick={startPlayback} className="start-game-button">
-            🎵 Start Game & Play Music
+            🎵 Try to survive your playlist
           </button>
+          <img
+            src={sessionStorage.getItem('playlist_image') || 'placeholder.png'}
+            alt="Playlist cover"
+            className="playlist-cover"
+            width={300}
+            height={300}
+          />
+          <p>
+            Playlist: {sessionStorage.getItem('playlist_name') || 'Loading...'}
+          </p>
           <div className="game-rules">
             <h3>Rules:</h3>
             <p>• You start with 5 lives ❤️</p>
@@ -87,8 +112,8 @@ function GameInterface() {
         <header className="app-header">
           <h1>💀 Game Over!</h1>
           <p>You survived for {Math.floor(state.elapsedMs / 1000)} seconds</p>
-          <button onClick={() => window.location.reload()}>
-            Play Again
+          <button onClick={startNewGame}>
+            🔄 Play Again
           </button>
         </header>
       </div>
@@ -103,13 +128,14 @@ function GameInterface() {
         <SkipControls />
         <div className="game-controls">
           <p>🎯 Use the skip button to lose lives • Listen to 3 full songs to gain a life</p>
-          <button onClick={() => window.location.reload()}>
-            New Game
+          <button onClick={startNewGame}>
+            🔄 New Game
           </button>
         </div>
       </header>
     </div>
   );
 }
+
 
 export default App;

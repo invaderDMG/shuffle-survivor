@@ -34,26 +34,23 @@ export function useStartGame() {
         });
 
         // 1. Fetch playlists and select one
-        const pls = await fetch('https://api.spotify.com/v1/me/playlists?limit=50', {
+        const playlists = await fetch('https://api.spotify.com/v1/me/playlists?limit=50', {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const { items } = await pls.json();
+        const { items } = await playlists.json();
         if (!items.length) throw new Error('No playlists');
 
-        const playlist = items[Math.floor(Math.random() * items.length)];
-        const { uri } = playlist;
+        const selectedPlaylist = items[Math.floor(Math.random() * items.length)];
+        const { uri } = selectedPlaylist;
         
-        // 2. Initialize game state
-        dispatch({ type: 'INIT', playlistUri: uri });
-        
-        // 3. Enable shuffle (but don't play yet)
         await fetch('https://api.spotify.com/v1/me/player/shuffle?state=true', {
           method: 'PUT',
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        // Store playlist URI for later playback
         sessionStorage.setItem('game_playlist_uri', uri);
+        sessionStorage.setItem('playlist_name', selectedPlaylist.name);
+        sessionStorage.setItem('playlist_image', selectedPlaylist.images[0].url);
         setPlaylistReady(true);
         
         dbg('🏁 Game prepared, waiting for user interaction');
@@ -71,7 +68,13 @@ export function useStartGame() {
     if (!playlistUri || gameReady) return;
 
     try {
-      dbg('▶️ Starting playback after user interaction');
+      dbg('🎮 Initializing NEW GAME - timer will reset to 0');
+      
+      dispatch({ type: 'INIT', playlistUri });
+      
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      dbg('▶️ Starting playback after timer reset');
       
       await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
         method: 'PUT',
@@ -83,7 +86,7 @@ export function useStartGame() {
       });
 
       setGameReady(true);
-      dbg('🎵 Playback started successfully');
+      dbg('🎵 Playback started - timer should be counting from 0');
     } catch (err) {
       dbg('❌ Playback start error', err);
     }
