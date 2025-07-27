@@ -1,0 +1,69 @@
+.streak-meter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  min-width: 120px;
+}
+
+.streak-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.streak-dots {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.25rem 0;
+}
+
+.streak-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.streak-dot.filled {
+  background: #1ed760;
+  border-color: #1ed760;
+  box-shadow: 0 0 8px rgba(30, 215, 96, 0.4);
+}
+
+.streak-dot.active {
+  transform: scale(1.2);
+  animation: pulse 1.5s infinite;
+}
+
+.streak-text {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  min-height: 1rem;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .streak-meter {
+    min-width: 100px;
+    padding: 0.5rem;
+  }
+  
+  .streak-dot {
+    width: 10px;
+    height: 10px;
+  }
+}
