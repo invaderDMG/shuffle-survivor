@@ -1,9 +1,7 @@
 import { useGame } from '../../game/GameProvider';
 import Hearts from './Hearts';
 import StreakMeter from './StreakMeter';
-import './HUD.css';              // ✅ Main styles
-import './StreakMeter.css';      // ✅ StreakMeter styles (if you have this)
-// import './HUD-animations.css'; // ✅ Optional enhanced animations
+import './HUD.css';
 
 export default function HUD() {
   const { state } = useGame();
@@ -21,9 +19,6 @@ export default function HUD() {
       <StreakMeter streak={state.streak} />
       <div className="timer" data-testid="game-timer">
         {minutes}:{seconds}
-      </div>
-      <div className="status" data-testid="game-status">
-        Status: {state.status}
       </div>
     </div>
   );
