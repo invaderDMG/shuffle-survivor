@@ -18,28 +18,15 @@
   justify-content: center;
 }
 
-.control-button.previous,
 .control-button.next {
   width: 48px;
   height: 48px;
-}
-
-.control-button.play-pause {
-  width: 56px;
-  height: 56px;
-  background: linear-gradient(135deg, #1ed760, #1db954);
-  border-color: #1ed760;
 }
 
 .control-button:hover {
   background: rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.4);
   transform: scale(1.05);
-}
-
-.control-button.play-pause:hover {
-  background: linear-gradient(135deg, #1db954, #169c46);
-  transform: scale(1.1);
 }
 
 .control-button:active {
@@ -56,13 +43,7 @@
     gap: 0.75rem;
   }
   
-  .control-button.previous,
   .control-button.next {
-    width: 44px;
-    height: 44px;
-  }
-  
-  .control-button.play-pause {
     width: 52px;
     height: 52px;
   }
