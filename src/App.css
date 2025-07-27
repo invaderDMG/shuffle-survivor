@@ -1,0 +1,57 @@
+.app {
+  text-align: center;
+  padding: 2rem;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.app-header {
+  background: linear-gradient(135deg, #1db954, #1ed760);
+  padding: 2rem;
+  border-radius: 12px;
+  color: white;
+  margin: 0 auto;
+  max-width: 600px;
+}
+
+.app-header h1 {
+  margin: 0 0 1rem 0;
+  font-size: 2.5rem;
+}
+
+.app-header p {
+  margin: 1rem 0;
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+.login-button {
+  background: #000;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1rem;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.login-button:hover {
+  transform: scale(1.05);
+}
+
+button {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
