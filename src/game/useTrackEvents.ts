@@ -20,7 +20,6 @@ export function useTrackEvents(player: Spotify.Player | null) {
     let lastTrackDuration = 0;
     let lastTrackPosition = 0;
     let trackCompletionTimeout: ReturnType<typeof setTimeout> | null = null;
-    let gameStartTime = 0;
 
     const handleTrackEnd = (trackId: string, wasSkipped: boolean) => {
       dbg(wasSkipped ? '⏭️ Track was skipped' : '✅ Track played fully', {
@@ -48,12 +47,6 @@ export function useTrackEvents(player: Spotify.Player | null) {
 
       // Detect if this is a new track
       if (lastTrackId !== currentTrack.id) {
-        // If this is the first track, set game start time
-        if (lastTrackId === null) {
-          gameStartTime = Date.now();
-          dbg('🎮 Game start time set', { gameStartTime });
-        }
-        
         dbg('🎵 New track detected', {
           trackName: currentTrack.name,
           artists: currentTrack.artists.map((a: any) => a.name).join(', '),
@@ -64,19 +57,14 @@ export function useTrackEvents(player: Spotify.Player | null) {
         });
 
         // If we had a previous track, determine if it was skipped
-        const timeSinceGameStart = Date.now() - gameStartTime;
-        const isInitialPhase = timeSinceGameStart < 5000; // First 5 seconds
-        
         dbg('🔍 Track change analysis', {
           lastTrackId,
           currentTrackId: currentTrack.id,
           isFirstTrack: lastTrackId === null,
-          willAnalyzeSkip: !!lastTrackId,
-          timeSinceGameStart,
-          isInitialPhase
+          willAnalyzeSkip: !!lastTrackId
         });
         
-        if (lastTrackId && !isInitialPhase) {
+        if (lastTrackId) {
           // Clear any pending completion timeout
           if (trackCompletionTimeout) {
             clearTimeout(trackCompletionTimeout);
@@ -85,25 +73,34 @@ export function useTrackEvents(player: Spotify.Player | null) {
 
           const playDuration = currentTime - trackStartTime;
           
-          // More sophisticated skip detection:
-          // 1. If played for less than 30 seconds, it's likely a skip
-          // 2. If we have duration info and position is near the end, it's likely completed
-          // 3. If we don't have duration info, use the 30-second rule
-          let wasSkipped = playDuration < 30000; // Default: less than 30 seconds = skip
+          // Improved skip detection based on actual track duration and playback position
+          let wasSkipped = false;
           
-          if (lastTrackDuration > 0 && lastTrackPosition > 0) {
-            // If we have duration info, check if we were near the end
-            const completionPercentage = (lastTrackPosition / lastTrackDuration) * 100;
-            const wasNearEnd = completionPercentage > 80; // Within 20% of the end
+          if (lastTrackDuration > 0) {
+            // We have duration info - use position-based detection
+            const completionPercentage = lastTrackPosition > 0 ? (lastTrackPosition / lastTrackDuration) * 100 : 0;
+            const wasNearEnd = completionPercentage > 85; // Within 15% of the end
+            const wasVeryShort = playDuration < 10000; // Less than 10 seconds
             
-            if (wasNearEnd) {
-              wasSkipped = false; // If we were near the end, it's likely completed
-              dbg('🎯 Track was near completion, marking as played fully', {
-                completionPercentage: `${completionPercentage.toFixed(1)}%`,
-                position: lastTrackPosition,
-                duration: lastTrackDuration
-              });
-            }
+            // Skip if: very short play time OR not near the end
+            wasSkipped = wasVeryShort || !wasNearEnd;
+            
+            dbg('🎯 Track completion analysis', {
+              playDuration: `${Math.round(playDuration / 1000)}s`,
+              trackDuration: `${Math.round(lastTrackDuration / 1000)}s`,
+              completionPercentage: `${completionPercentage.toFixed(1)}%`,
+              wasNearEnd,
+              wasVeryShort,
+              wasSkipped
+            });
+          } else {
+            // No duration info - use time-based detection with shorter threshold
+            wasSkipped = playDuration < 15000; // Less than 15 seconds = skip
+            
+            dbg('🎯 Track completion analysis (no duration)', {
+              playDuration: `${Math.round(playDuration / 1000)}s`,
+              wasSkipped
+            });
           }
           
           dbg('Track end analysis', {
