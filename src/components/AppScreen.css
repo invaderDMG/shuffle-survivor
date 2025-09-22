@@ -1,172 +1,362 @@
-/* Estilo base para todas las pantallas de la aplicación */
+/* Estilo base para todas las pantallas de la aplicación - Frutiger Aero */
 .app-screen {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(135deg, #1db954, #1ed760);
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(120, 200, 255, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 150, 200, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(150, 255, 200, 0.2) 0%, transparent 50%),
+    linear-gradient(135deg, #87CEEB 0%, #98E4FF 25%, #B8E6FF 50%, #D1F2FF 75%, #E8F8FF 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   overflow-y: auto;
+  position: relative;
+}
+
+/* Elementos flotantes de fondo */
+.app-screen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 30%),
+    radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.05) 0%, transparent 25%);
+  pointer-events: none;
+  animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-10px) rotate(1deg); }
+  66% { transform: translateY(5px) rotate(-1deg); }
 }
 
 .app-screen-content {
   text-align: center;
-  color: white;
+  color: #2c3e50;
   max-width: 600px;
   padding: 2rem;
   width: 100%;
   box-sizing: border-box;
+  position: relative;
+  z-index: 10;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.8);
 }
 
-/* Título principal */
+/* Título principal - Frutiger Aero */
 .app-screen h1 {
-  font-size: 3rem;
+  font-size: 3.5rem;
   margin: 0 0 2rem 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  font-weight: 700;
+  font-weight: 300;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 4px 8px rgba(255, 255, 255, 0.5);
+  letter-spacing: -0.02em;
+  animation: titleGlow 3s ease-in-out infinite alternate;
 }
 
-/* Subtítulos */
+@keyframes titleGlow {
+  0% { filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.3)); }
+  100% { filter: drop-shadow(0 0 30px rgba(245, 87, 108, 0.4)); }
+}
+
+/* Subtítulos - Frutiger Aero */
 .app-screen h2 {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   margin: 0 0 1rem 0;
-  font-weight: 600;
-  opacity: 0.95;
+  font-weight: 400;
+  color: #5a67d8;
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.01em;
 }
 
 .app-screen h3 {
-  font-size: 1.25rem;
+  font-size: 1.4rem;
   margin: 0 0 0.5rem 0;
-  font-weight: 600;
-  color: #1ed760;
+  font-weight: 500;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.5);
 }
 
-/* Párrafos */
+/* Párrafos - Frutiger Aero */
 .app-screen p {
-  font-size: 1rem;
+  font-size: 1.1rem;
   margin: 1rem 0;
-  opacity: 0.9;
-  line-height: 1.5;
+  color: #4a5568;
+  line-height: 1.6;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.7);
+  font-weight: 300;
 }
 
-/* Botones principales */
+/* Botones principales - Frutiger Aero */
 .app-screen .primary-button {
-  background: linear-gradient(135deg, #1ed760, #1db954);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
   color: white;
   border: none;
-  padding: 1rem 2rem;
-  font-size: 1.25rem;
-  border-radius: 30px;
+  padding: 1.2rem 2.5rem;
+  font-size: 1.3rem;
+  border-radius: 50px;
   cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
+  font-weight: 400;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   margin: 1rem 0;
-  box-shadow: 0 4px 15px rgba(30, 215, 96, 0.3);
+  box-shadow: 
+    0 8px 32px rgba(102, 126, 234, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.app-screen .primary-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.6s ease;
+}
+
+.app-screen .primary-button:hover::before {
+  left: 100%;
 }
 
 .app-screen .primary-button:hover {
-  background: linear-gradient(135deg, #1db954, #169c46);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(30, 215, 96, 0.4);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 
+    0 12px 40px rgba(102, 126, 234, 0.4),
+    0 4px 20px rgba(245, 87, 108, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  animation: buttonPulse 0.6s ease-out;
 }
 
-/* Botones secundarios */
+@keyframes buttonPulse {
+  0% { transform: translateY(-3px) scale(1.02); }
+  50% { transform: translateY(-5px) scale(1.05); }
+  100% { transform: translateY(-3px) scale(1.02); }
+}
+
+/* Botones secundarios - Frutiger Aero */
 .app-screen .secondary-button {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  border-radius: 25px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+  color: #5a67d8;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  padding: 0.9rem 1.8rem;
+  font-size: 1.1rem;
+  border-radius: 40px;
   cursor: pointer;
-  font-weight: 500;
-  transition: all 0.3s ease;
+  font-weight: 400;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   margin: 0.5rem;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(20px);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0 4px 20px rgba(255, 255, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 .app-screen .secondary-button:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.2));
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 
+    0 8px 30px rgba(255, 255, 255, 0.3),
+    0 4px 15px rgba(102, 126, 234, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
-/* Botones de error/acción */
+/* Botones de error/acción - Frutiger Aero */
 .app-screen .action-button {
-  background: #ff6b6b;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 50%, #ffa8a8 100%);
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  border-radius: 25px;
+  padding: 0.9rem 1.8rem;
+  font-size: 1.1rem;
+  border-radius: 40px;
   cursor: pointer;
-  font-weight: 500;
-  transition: all 0.3s ease;
+  font-weight: 400;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   margin: 0.5rem;
-  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+  box-shadow: 
+    0 6px 25px rgba(255, 107, 107, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .app-screen .action-button:hover {
-  background: #ff5252;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+  background: linear-gradient(135deg, #ff5252 0%, #ff7979 50%, #ff9f9f 100%);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 
+    0 10px 35px rgba(255, 82, 82, 0.5),
+    0 4px 20px rgba(255, 107, 107, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
-/* Imágenes */
+/* Imágenes - Frutiger Aero */
 .app-screen img {
-  border-radius: 12px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  box-shadow: 
+    0 15px 35px rgba(102, 126, 234, 0.2),
+    0 5px 15px rgba(245, 87, 108, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
   margin: 1rem 0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
-/* Contenedores de contenido */
+.app-screen img:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 
+    0 20px 45px rgba(102, 126, 234, 0.3),
+    0 8px 25px rgba(245, 87, 108, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+/* Contenedores de contenido - Frutiger Aero */
 .app-screen .content-section {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin: 1rem 0;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.25) 0%, 
+    rgba(255, 255, 255, 0.1) 50%, 
+    rgba(255, 255, 255, 0.15) 100%);
+  border-radius: 25px;
+  padding: 2rem;
+  margin: 1.5rem 0;
+  backdrop-filter: blur(25px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 8px 32px rgba(102, 126, 234, 0.15),
+    0 4px 16px rgba(245, 87, 108, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  position: relative;
+  overflow: hidden;
 }
 
-/* Listas de reglas */
+.app-screen .content-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: shimmer 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes shimmer {
+  0%, 100% { transform: translateX(-100%) translateY(-100%) rotate(0deg); }
+  50% { transform: translateX(0%) translateY(0%) rotate(180deg); }
+}
+
+/* Listas de reglas - Frutiger Aero */
 .app-screen .rules-list {
   text-align: left;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin: 1rem 0;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.2) 0%, 
+    rgba(255, 255, 255, 0.05) 50%, 
+    rgba(255, 255, 255, 0.15) 100%);
+  border-radius: 25px;
+  padding: 2rem;
+  margin: 1.5rem 0;
+  backdrop-filter: blur(25px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 8px 32px rgba(102, 126, 234, 0.15),
+    0 4px 16px rgba(245, 87, 108, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.app-screen .rules-list::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+  animation: shimmer 10s ease-in-out infinite reverse;
+  pointer-events: none;
 }
 
 .app-screen .rules-list h3 {
-  margin: 0 0 1rem 0;
+  margin: 0 0 1.5rem 0;
   text-align: center;
+  position: relative;
+  z-index: 2;
 }
 
 .app-screen .rules-list p {
-  margin: 0.5rem 0;
-  font-size: 0.95rem;
+  margin: 0.8rem 0;
+  font-size: 1rem;
+  position: relative;
+  z-index: 2;
+  color: #4a5568;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.7);
 }
 
-/* Controles de juego */
+/* Controles de juego - Frutiger Aero */
 .app-screen .game-controls {
   margin-top: 2rem;
   text-align: center;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.15) 0%, 
+    rgba(255, 255, 255, 0.05) 100%);
+  border-radius: 20px;
+  padding: 1.5rem;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 4px 20px rgba(102, 126, 234, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .app-screen .game-controls p {
-  font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: #5a67d8;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+  font-weight: 300;
 }
 
-/* Responsive */
+/* Elementos flotantes adicionales */
+.app-screen::after {
+  content: '';
+  position: absolute;
+  top: 20%;
+  right: 10%;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: floatElement 15s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes floatElement {
+  0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+  25% { transform: translateY(-20px) translateX(10px) rotate(90deg); }
+  50% { transform: translateY(-10px) translateX(-10px) rotate(180deg); }
+  75% { transform: translateY(-30px) translateX(5px) rotate(270deg); }
+}
+
+/* Responsive - Frutiger Aero */
 @media (max-width: 768px) {
   .app-screen-content {
     padding: 1rem;
@@ -174,11 +364,34 @@
   }
   
   .app-screen h1 {
-    font-size: 2.5rem;
+    font-size: 2.8rem;
   }
   
   .app-screen .primary-button {
-    padding: 0.875rem 1.5rem;
-    font-size: 1.125rem;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+  }
+  
+  .app-screen .content-section,
+  .app-screen .rules-list {
+    padding: 1.5rem;
+    margin: 1rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-screen h1 {
+    font-size: 2.2rem;
+  }
+  
+  .app-screen .primary-button {
+    padding: 0.9rem 1.8rem;
+    font-size: 1.1rem;
+  }
+  
+  .app-screen .secondary-button,
+  .app-screen .action-button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
   }
 }

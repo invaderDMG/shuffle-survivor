@@ -1,27 +1,58 @@
+/* Loading Screen - Frutiger Aero */
 .loading-screen {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(135deg, #1db954, #1ed760);
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(120, 200, 255, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 150, 200, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(150, 255, 200, 0.2) 0%, transparent 50%),
+    linear-gradient(135deg, #87CEEB 0%, #98E4FF 25%, #B8E6FF 50%, #D1F2FF 75%, #E8F8FF 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  position: relative;
+}
+
+.loading-screen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 30%),
+    radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.05) 0%, transparent 25%);
+  pointer-events: none;
+  animation: float 20s ease-in-out infinite;
 }
 
 .loading-content {
   text-align: center;
-  color: white;
+  color: #2c3e50;
   max-width: 500px;
   padding: 2rem;
+  position: relative;
+  z-index: 10;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.8);
 }
 
 .loading-content h1 {
-  font-size: 3rem;
+  font-size: 3.5rem;
   margin: 0 0 2rem 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  font-weight: 300;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 4px 8px rgba(255, 255, 255, 0.5);
+  letter-spacing: -0.02em;
+  animation: titleGlow 3s ease-in-out infinite alternate;
 }
 
 .loading-spinner {
@@ -29,30 +60,40 @@
 }
 
 .spinner {
-  width: 60px;
-  height: 60px;
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  border-top: 4px solid white;
+  width: 80px;
+  height: 80px;
+  border: 6px solid rgba(102, 126, 234, 0.2);
+  border-top: 6px solid #667eea;
+  border-right: 6px solid #764ba2;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: spin 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   margin: 0 auto;
+  box-shadow: 
+    0 0 20px rgba(102, 126, 234, 0.3),
+    inset 0 0 20px rgba(255, 255, 255, 0.1);
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.1); }
+  100% { transform: rotate(360deg) scale(1); }
 }
 
 .loading-message h2 {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   margin: 0 0 0.5rem 0;
-  font-weight: 600;
+  font-weight: 400;
+  color: #5a67d8;
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.01em;
 }
 
 .loading-message p {
-  font-size: 1rem;
+  font-size: 1.1rem;
   margin: 0;
-  opacity: 0.9;
+  color: #4a5568;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.7);
+  font-weight: 300;
 }
 
 .progress-container {
@@ -60,27 +101,60 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.2) 0%, 
+    rgba(255, 255, 255, 0.05) 100%);
+  border-radius: 20px;
+  padding: 1.5rem;
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 8px 32px rgba(102, 126, 234, 0.15),
+    0 4px 16px rgba(245, 87, 108, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .progress-bar {
   width: 100%;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 4px;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
   overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .progress-fill {
   height: 100%;
-  background: white;
-  border-radius: 4px;
-  transition: width 0.3s ease;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+  border-radius: 10px;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 0 20px rgba(102, 126, 234, 0.4),
+    0 2px 8px rgba(245, 87, 108, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: progressShimmer 2s ease-in-out infinite;
+}
+
+@keyframes progressShimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
 }
 
 .progress-text {
-  font-size: 0.9rem;
-  font-weight: 600;
-  opacity: 0.9;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #5a67d8;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
 }
