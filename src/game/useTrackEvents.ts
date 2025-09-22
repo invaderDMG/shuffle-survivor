@@ -64,7 +64,8 @@ export function useTrackEvents(player: Spotify.Player | null) {
           willAnalyzeSkip: !!lastTrackId
         });
         
-        if (lastTrackId) {
+        // Only analyze skip if this is NOT the first track
+        if (lastTrackId !== null) {
           // Clear any pending completion timeout
           if (trackCompletionTimeout) {
             clearTimeout(trackCompletionTimeout);
