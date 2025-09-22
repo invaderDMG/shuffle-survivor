@@ -1,0 +1,184 @@
+/* Estilo base para todas las pantallas de la aplicación */
+.app-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #1db954, #1ed760);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.app-screen-content {
+  text-align: center;
+  color: white;
+  max-width: 600px;
+  padding: 2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Título principal */
+.app-screen h1 {
+  font-size: 3rem;
+  margin: 0 0 2rem 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  font-weight: 700;
+}
+
+/* Subtítulos */
+.app-screen h2 {
+  font-size: 1.5rem;
+  margin: 0 0 1rem 0;
+  font-weight: 600;
+  opacity: 0.95;
+}
+
+.app-screen h3 {
+  font-size: 1.25rem;
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+  color: #1ed760;
+}
+
+/* Párrafos */
+.app-screen p {
+  font-size: 1rem;
+  margin: 1rem 0;
+  opacity: 0.9;
+  line-height: 1.5;
+}
+
+/* Botones principales */
+.app-screen .primary-button {
+  background: linear-gradient(135deg, #1ed760, #1db954);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.25rem;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin: 1rem 0;
+  box-shadow: 0 4px 15px rgba(30, 215, 96, 0.3);
+}
+
+.app-screen .primary-button:hover {
+  background: linear-gradient(135deg, #1db954, #169c46);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(30, 215, 96, 0.4);
+}
+
+/* Botones secundarios */
+.app-screen .secondary-button {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  margin: 0.5rem;
+  backdrop-filter: blur(10px);
+}
+
+.app-screen .secondary-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+/* Botones de error/acción */
+.app-screen .action-button {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  margin: 0.5rem;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+}
+
+.app-screen .action-button:hover {
+  background: #ff5252;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+}
+
+/* Imágenes */
+.app-screen img {
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  margin: 1rem 0;
+}
+
+/* Contenedores de contenido */
+.app-screen .content-section {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Listas de reglas */
+.app-screen .rules-list {
+  text-align: left;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.app-screen .rules-list h3 {
+  margin: 0 0 1rem 0;
+  text-align: center;
+}
+
+.app-screen .rules-list p {
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+}
+
+/* Controles de juego */
+.app-screen .game-controls {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.app-screen .game-controls p {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .app-screen-content {
+    padding: 1rem;
+    max-width: 100%;
+  }
+  
+  .app-screen h1 {
+    font-size: 2.5rem;
+  }
+  
+  .app-screen .primary-button {
+    padding: 0.875rem 1.5rem;
+    font-size: 1.125rem;
+  }
+}
