@@ -6,6 +6,14 @@ import './HUD.css';
 export default function HUD() {
   const { state } = useGame();
   
+  // Debug logs
+  console.log('HUD Debug:', {
+    status: state.status,
+    elapsedTime: state.elapsedTime,
+    lives: state.lives,
+    streak: state.streak
+  });
+  
   const minutes = Math.floor(state.elapsedTime / 60_000)
     .toString()
     .padStart(2, '0');
