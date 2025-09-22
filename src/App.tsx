@@ -131,7 +131,7 @@ function GameInterface() {
   }
 
   // Estado de juego activo
-  if (isPlaying && state.status === 'playing') {
+  if (isPlaying || state.status === 'playing') {
     return (
       <AppScreen>
         <h1>🎵 Shuffle Survivor</h1>
