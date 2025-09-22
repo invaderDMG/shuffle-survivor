@@ -13,9 +13,9 @@ const mockUseGame = useGame as jest.MockedFunction<typeof useGame>;
 
 describe('HUD Component', () => {
   const mockGameState = {
-    lives: 3,
-    streak: 1,
-    elapsedMs: 65000, // 1 minute 5 seconds
+    lives: 3 as const,
+    streak: 1 as const,
+    elapsedTime: 65000, // 1 minute 5 seconds
     status: 'playing' as const,
     playlistUri: 'test:playlist',
     lastTrackId: null,

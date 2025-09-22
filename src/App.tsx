@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useSpotifyAuth } from './hooks/useSpotifyAuth';
-import { useStartGame } from './hooks/useStartGame';
+import { useAppInitialization } from './hooks/useAppInitialization';
 import { useGame } from './game/GameProvider';
 import PlayerProvider from './spotify/PlayerProvider';
 import GameProvider from './game/GameProvider';
 import HUD from './components/HUD/HUD';
 import SkipControls from './components/HUD/SkipControls';
+import LoadingScreen from './components/LoadingScreen';
 import { dbg } from './utils/debug';
 import './App.css';
 
@@ -46,92 +47,117 @@ function App() {
 }
 
 function GameInterface() {
-  const { state, dispatch } = useGame();
-  const { gameReady, playlistReady, startPlayback, canStartGame } = useStartGame();
+  const { state } = useGame();
+  const { 
+    appState, 
+    startGame, 
+    resetApp, 
+    isReady, 
+    isPlaying, 
+    isLoading, 
+    hasError
+  } = useAppInitialization();
 
-  // Function to start a completely new game
-  const startNewGame = () => {
-    dbg('🔄 Starting completely new game');
-    
-    // Reset all game state
-    dispatch({ type: 'RESET' });
-    
-    // Clear session storage game data
-    sessionStorage.removeItem('game_playlist_uri');
-    sessionStorage.removeItem('playlist_name');
-    
-    // Reload the page to restart everything fresh
-    window.location.reload();
-  };
+  // Pantalla de carga
+  if (isLoading) {
+    return (
+      <LoadingScreen
+        message={appState.status === 'loading' ? appState.message : 'Cargando...'}
+        progress={appState.status === 'loading' ? appState.progress : 0}
+        subMessage={appState.status === 'loading' ? appState.subMessage : undefined}
+      />
+    );
+  }
 
-  // Show "Start Game" button to get user interaction
-  if (playlistReady && !gameReady) {
+  // Estado de error
+  if (hasError) {
     return (
       <div className="app">
         <header className="app-header">
           <h1>🎵 Shuffle Survivor</h1>
-          <button onClick={startPlayback} className="start-game-button">
-            🎵 Try to survive your playlist
+          <p>❌ {appState.status === 'error' ? appState.message : 'Algo salió mal'}</p>
+          <button onClick={resetApp} className="retry-button">
+            🔄 Intentar de nuevo
+          </button>
+        </header>
+      </div>
+    );
+  }
+
+  // Estado listo para empezar
+  if (isReady) {
+    return (
+      <div className="app">
+        <header className="app-header">
+          <h1>🎵 Shuffle Survivor</h1>
+          <button onClick={startGame} className="start-game-button">
+            🎵 Intenta sobrevivir a tu playlist
           </button>
           <img
-            src={sessionStorage.getItem('playlist_image') || 'placeholder.png'}
-            alt="Playlist cover"
+            src={appState.status === 'ready' ? appState.playlistImage : 'placeholder.png'}
+            alt="Portada de playlist"
             className="playlist-cover"
             width={300}
             height={300}
           />
           <p>
-            Playlist: {sessionStorage.getItem('playlist_name') || 'Loading...'}
+            Playlist: {appState.status === 'ready' ? appState.playlistName : 'Cargando...'}
           </p>
           <div className="game-rules">
-            <h3>Rules:</h3>
-            <p>• You start with 5 lives ❤️</p>
-            <p>• Skip a song = lose a life 💔</p>
-            <p>• Listen to 3 full songs = gain a life ✨</p>
-            <p>• Game over when you reach 0 lives ☠️</p>
+            <h3>Reglas:</h3>
+            <p>• Empiezas con 5 vidas ❤️</p>
+            <p>• Saltar una canción = perder una vida 💔</p>
+            <p>• Escuchar 3 canciones completas = ganar una vida ✨</p>
+            <p>• Game over cuando llegues a 0 vidas ☠️</p>
           </div>
         </header>
       </div>
     );
   }
 
-  if (state.status === 'idle' || !gameReady) {
-    return (
-      <div className="app">
-        <header className="app-header">
-          <h1>🎵 Shuffle Survivor</h1>
-          <p>Initializing game...</p>
-        </header>
-      </div>
-    );
-  }
-
+  // Estado de game over
   if (state.status === 'game-over') {
     return (
       <div className="app">
         <header className="app-header">
-          <h1>💀 Game Over!</h1>
-          <p>You survived for {Math.floor(state.elapsedMs / 1000)} seconds</p>
-          <button onClick={startNewGame}>
-            🔄 Play Again
+          <h1>💀 ¡Game Over!</h1>
+          <p>Sobreviviste por {Math.floor(state.elapsedTime / 1000)} segundos</p>
+          <button onClick={resetApp} className="retry-button">
+            🔄 Jugar de nuevo
           </button>
         </header>
       </div>
     );
   }
 
+  // Estado de juego activo
+  if (isPlaying && state.status === 'playing') {
+    return (
+      <div className="app">
+        <header className="app-header">
+          <h1>🎵 Shuffle Survivor</h1>
+          <HUD />
+          <SkipControls />
+          <div className="game-controls">
+            <p>🎯 Usa el botón de saltar para perder vidas • Escucha 3 canciones completas para ganar una vida</p>
+            <button onClick={resetApp} className="new-game-button">
+              🔄 Nuevo Juego
+            </button>
+          </div>
+        </header>
+      </div>
+    );
+  }
+
+  // Fallback - no debería llegar aquí
   return (
     <div className="app">
       <header className="app-header">
         <h1>🎵 Shuffle Survivor</h1>
-        <HUD />
-        <SkipControls />
-        <div className="game-controls">
-          <p>🎯 Use the skip button to lose lives • Listen to 3 full songs to gain a life</p>
-          <button onClick={startNewGame}>
-            🔄 New Game
-          </button>
-        </div>
+        <p>Algo inesperado pasó. Por favor recarga la página.</p>
+        <button onClick={() => window.location.reload()} className="retry-button">
+          🔄 Recargar
+        </button>
       </header>
     </div>
   );

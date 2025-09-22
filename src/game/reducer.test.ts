@@ -86,13 +86,23 @@ describe('gameReducer', () => {
   });
 
   describe('TICK action', () => {
-    it('should add elapsed time', () => {
+    it('should add elapsed time when playing', () => {
+      const playingState = { ...initialState, status: 'playing' as const };
+      const result = gameReducer(playingState, {
+        type: 'TICK',
+        dtMs: 50
+      });
+
+      expect(result.elapsedTime).toBe(50);
+    });
+
+    it('should not add elapsed time when not playing', () => {
       const result = gameReducer(initialState, {
         type: 'TICK',
         dtMs: 50
       });
 
-      expect(result.elapsedMs).toBe(50);
+      expect(result.elapsedTime).toBe(0);
     });
   });
 
@@ -101,7 +111,7 @@ describe('gameReducer', () => {
       const modifiedState: GameState = {
         ...initialState,
         lives: 2,
-        elapsedMs: 1000,
+        elapsedTime: 1000,
         status: 'game-over' as const
       };
 

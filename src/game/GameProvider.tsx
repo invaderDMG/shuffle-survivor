@@ -8,10 +8,7 @@ interface GameContextType {
   dispatch: React.Dispatch<GameAction>;
 }
 
-const GameContext = createContext<GameContextType>({
-  state: initialState,
-  dispatch: () => {}
-});
+const GameContext = createContext<GameContextType | null>(null);
 
 export function useGame() {
   const context = useContext(GameContext);

@@ -6,10 +6,10 @@ import './HUD.css';
 export default function HUD() {
   const { state } = useGame();
   
-  const minutes = Math.floor(state.elapsedMs / 60_000)
+  const minutes = Math.floor(state.elapsedTime / 60_000)
     .toString()
     .padStart(2, '0');
-  const seconds = Math.floor((state.elapsedMs % 60_000) / 1_000)
+  const seconds = Math.floor((state.elapsedTime % 60_000) / 1_000)
     .toString()
     .padStart(2, '0');
 

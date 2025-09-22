@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2020",
-    "module": "commonjs",
+    "module": "esnext",
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
@@ -26,6 +26,7 @@
     "src/**/*",
     "src/**/*.test.ts",
     "src/**/*.test.tsx",
-    "src/setupTests.ts"
+    "src/setupTests.ts",
+    "src/types/**/*"
   ]
 }

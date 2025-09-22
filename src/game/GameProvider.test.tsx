@@ -30,12 +30,12 @@ describe('GameProvider', () => {
       });
     });
 
-    const initialTime = result.current.state.elapsedMs;
+    const initialTime = result.current.state.elapsedTime;
 
     await act(async () => {
       await new Promise(resolve => setTimeout(resolve, 100));
     });
 
-    expect(result.current.state.elapsedMs).toBeGreaterThan(initialTime);
+    expect(result.current.state.elapsedTime).toBeGreaterThan(initialTime);
   });
 });

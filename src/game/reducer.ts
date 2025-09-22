@@ -5,7 +5,7 @@ export const MAX_LIVES = 5 as const;
 export const initialState: GameState = {
   lives: MAX_LIVES,
   streak: 0,
-  elapsedMs: 0,
+  elapsedTime: 0,
   playlistUri: null,
   status: 'idle',
   lastTrackId: null,
@@ -45,7 +45,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
     case 'TICK':
       if (state.status !== 'playing') return state;
-      return { ...state, elapsedMs: state.elapsedMs + action.dtMs };
+      return { ...state, elapsedTime: state.elapsedTime + action.dtMs };
     case 'RESET':
       return { ...initialState };
     default:
