@@ -117,9 +117,16 @@ export function useTrackEvents(player: Spotify.Player | null) {
           }, remainingTime + 2000); // Add 2 seconds buffer
         }
 
-        // For the first track, also check if it's paused and log it
+        // For the first track, also check if it's paused and resume it
         if (lastTrackId === currentTrack.id && state.paused) {
-          dbg('⚠️ First track is paused - this might be the issue!');
+          dbg('⚠️ First track is paused - resuming automatically...');
+          if (player) {
+            player.resume().then(() => {
+              dbg('✅ First track resumed successfully');
+            }).catch((err: any) => {
+              dbg('❌ Error resuming first track:', err);
+            });
+          }
         }
       } else {
         // Same track, update position info for better skip detection

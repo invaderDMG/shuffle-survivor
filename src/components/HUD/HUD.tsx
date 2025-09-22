@@ -15,6 +15,17 @@ export default function HUD() {
 
   return (
     <div className="hud" data-testid="game-hud">
+      <svg width="0" height="0" style={{ position: 'absolute' }}>
+        <defs>
+          <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#ff6b6b" />
+            <stop offset="25%" stopColor="#ff8e8e" />
+            <stop offset="50%" stopColor="#ffa8a8" />
+            <stop offset="75%" stopColor="#ffb3b3" />
+            <stop offset="100%" stopColor="#ffc0c0" />
+          </linearGradient>
+        </defs>
+      </svg>
       <Hearts lives={state.lives} />
       <StreakMeter streak={state.streak} />
       <div className="timer" data-testid="game-timer">
