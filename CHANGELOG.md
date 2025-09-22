@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.1.0] - 2024-12-19
+
+### 🎨 Mejoras de UI/UX
+- **Diseño Homogéneo**: Implementado un sistema de diseño consistente en todas las pantallas
+- **Componente AppScreen**: Creado componente reutilizable con gradiente de Spotify
+- **Glassmorphism**: Añadidos efectos de cristal y transparencias modernas
+- **Tipografía Jerárquica**: Implementada jerarquía visual clara y profesional
+- **Botones Estilizados**: Diseño consistente con efectos hover y transiciones suaves
+- **Diseño Responsive**: Mejorada la experiencia en dispositivos móviles
+
+### 🔧 Refactorización
+- **Centralización de Estilos**: Movidos estilos comunes a `AppScreen.css`
+- **Componentes Reutilizables**: Sistema de componentes base para consistencia
+- **Código Limpio**: Mejor separación de responsabilidades
+
+### 📁 Archivos Nuevos
+- `src/components/AppScreen.tsx` - Componente base para todas las pantallas
+- `src/components/AppScreen.css` - Estilos unificados y modernos
+
+### 📁 Archivos Modificados
+- `src/App.tsx` - Integración del nuevo sistema de diseño homogéneo
+
 ## [1.0.0] - 2024-12-19
 
 ### ✨ Nuevas Características
