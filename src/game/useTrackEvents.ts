@@ -5,6 +5,13 @@ import { dbg } from '../utils/debug';
 export function useTrackEvents(player: Spotify.Player | null) {
   const { dispatch, state } = useGame();
 
+  // Track when game starts
+  useEffect(() => {
+    if (state.status === 'playing') {
+      dbg('🎮 Game started - initializing track events');
+    }
+  }, [state.status]);
+
   useEffect(() => {
     if (!player) return;
 
@@ -13,6 +20,7 @@ export function useTrackEvents(player: Spotify.Player | null) {
     let lastTrackDuration = 0;
     let lastTrackPosition = 0;
     let trackCompletionTimeout: ReturnType<typeof setTimeout> | null = null;
+    let gameStartTime = 0;
 
     const handleTrackEnd = (trackId: string, wasSkipped: boolean) => {
       dbg(wasSkipped ? '⏭️ Track was skipped' : '✅ Track played fully', {
@@ -40,6 +48,12 @@ export function useTrackEvents(player: Spotify.Player | null) {
 
       // Detect if this is a new track
       if (lastTrackId !== currentTrack.id) {
+        // If this is the first track, set game start time
+        if (lastTrackId === null) {
+          gameStartTime = Date.now();
+          dbg('🎮 Game start time set', { gameStartTime });
+        }
+        
         dbg('🎵 New track detected', {
           trackName: currentTrack.name,
           artists: currentTrack.artists.map((a: any) => a.name).join(', '),
@@ -50,7 +64,19 @@ export function useTrackEvents(player: Spotify.Player | null) {
         });
 
         // If we had a previous track, determine if it was skipped
-        if (lastTrackId) {
+        const timeSinceGameStart = Date.now() - gameStartTime;
+        const isInitialPhase = timeSinceGameStart < 5000; // First 5 seconds
+        
+        dbg('🔍 Track change analysis', {
+          lastTrackId,
+          currentTrackId: currentTrack.id,
+          isFirstTrack: lastTrackId === null,
+          willAnalyzeSkip: !!lastTrackId,
+          timeSinceGameStart,
+          isInitialPhase
+        });
+        
+        if (lastTrackId && !isInitialPhase) {
           // Clear any pending completion timeout
           if (trackCompletionTimeout) {
             clearTimeout(trackCompletionTimeout);
