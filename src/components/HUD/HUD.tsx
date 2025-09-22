@@ -11,7 +11,9 @@ export default function HUD() {
     status: state.status,
     elapsedTime: state.elapsedTime,
     lives: state.lives,
-    streak: state.streak
+    streak: state.streak,
+    playlistUri: state.playlistUri,
+    lastTrackId: state.lastTrackId
   });
   
   const minutes = Math.floor(state.elapsedTime / 60_000)

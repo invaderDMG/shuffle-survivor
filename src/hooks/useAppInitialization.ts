@@ -12,7 +12,7 @@ export type AppState =
 
 export function useAppInitialization() {
   const player = useContext(PlayerCtx);
-  const { state } = useGame();
+  const { state, dispatch } = useGame();
   const [appState, setAppState] = useState<AppState>({ 
     status: 'loading', 
     message: 'Iniciando aplicación...', 
@@ -202,8 +202,11 @@ export function useAppInitialization() {
         }
       }
 
-      setAppState({ status: 'playing' });
+      // Disparar acción INIT del juego
+      dispatch({ type: 'INIT', playlistUri });
       dbg('🎵 Juego iniciado exitosamente');
+      
+      setAppState({ status: 'playing' });
 
     } catch (error) {
       dbg('❌ Error iniciando juego:', error);
