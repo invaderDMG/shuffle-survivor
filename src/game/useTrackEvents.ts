@@ -1,13 +1,36 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useGame } from './GameProvider';
 import { dbg } from '../utils/debug';
 
 export function useTrackEvents(player: Spotify.Player | null) {
   const { dispatch, state } = useGame();
+  
+  // Use refs to persist tracking variables across renders
+  const trackingRef = useRef({
+    lastTrackId: null as string | null,
+    trackStartTime: 0,
+    lastTrackDuration: 0,
+    lastTrackPosition: 0,
+    trackCompletionTimeout: null as ReturnType<typeof setTimeout> | null,
+    isFirstTrack: true,
+    gameInitialized: false
+  });
 
-  // Track when game starts
+  // Reset tracking variables when game resets
   useEffect(() => {
-    if (state.status === 'playing') {
+    if (state.status === 'idle') {
+      dbg('🔄 Game reset - clearing track tracking variables');
+      // Reset all tracking variables
+      trackingRef.current = {
+        lastTrackId: null,
+        trackStartTime: 0,
+        lastTrackDuration: 0,
+        lastTrackPosition: 0,
+        trackCompletionTimeout: null,
+        isFirstTrack: true,
+        gameInitialized: false
+      };
+    } else if (state.status === 'playing') {
       dbg('🎮 Game started - initializing track events');
     }
   }, [state.status]);
@@ -15,11 +38,8 @@ export function useTrackEvents(player: Spotify.Player | null) {
   useEffect(() => {
     if (!player) return;
 
-    let lastTrackId: string | null = null;
-    let trackStartTime = 0;
-    let lastTrackDuration = 0;
-    let lastTrackPosition = 0;
-    let trackCompletionTimeout: ReturnType<typeof setTimeout> | null = null;
+    // Use the ref values for tracking
+    const tracking = trackingRef.current;
 
     const handleTrackEnd = (trackId: string, wasSkipped: boolean) => {
       dbg(wasSkipped ? '⏭️ Track was skipped' : '✅ Track played fully', {
@@ -34,115 +54,47 @@ export function useTrackEvents(player: Spotify.Player | null) {
       });
     };
 
-    const handlePlayerStateChanged = (state: Spotify.PlaybackState | null) => {
-      
-
-      if (!state || !state.track_window.current_track) {
+    const handlePlayerStateChanged = (playbackState: Spotify.PlaybackState | null) => {
+      if (!playbackState || !playbackState.track_window.current_track) {
         dbg('⚠️ No state or current track available');
         return;
       }
 
-      const currentTrack = state.track_window.current_track;
-      const currentTime = Date.now();
+      const currentTrack = playbackState.track_window.current_track;
 
       // Detect if this is a new track
-      if (lastTrackId !== currentTrack.id) {
+      if (tracking.lastTrackId !== currentTrack.id) {
         dbg('🎵 New track detected', {
           trackName: currentTrack.name,
           artists: currentTrack.artists.map((a: any) => a.name).join(', '),
           trackId: currentTrack.id,
-          isFirstTrack: lastTrackId === null,
-          isPaused: state.paused,
-          duration: state.duration
+          isFirstTrack: tracking.lastTrackId === null,
+          isPaused: playbackState.paused,
+          duration: playbackState.duration
         });
 
-        // If we had a previous track, determine if it was skipped
-        dbg('🔍 Track change analysis', {
-          lastTrackId,
-          currentTrackId: currentTrack.id,
-          isFirstTrack: lastTrackId === null,
-          willAnalyzeSkip: !!lastTrackId
-        });
+        // El logging de vidas se hace en el useEffect separado
+
+        // Update tracking
+        tracking.lastTrackId = currentTrack.id;
+        tracking.trackStartTime = Date.now();
+        tracking.lastTrackDuration = playbackState.duration || 0;
+        tracking.lastTrackPosition = playbackState.position || 0;
         
-        // Only analyze skip if this is NOT the first track
-        if (lastTrackId !== null) {
-          // Clear any pending completion timeout
-          if (trackCompletionTimeout) {
-            clearTimeout(trackCompletionTimeout);
-            trackCompletionTimeout = null;
-          }
-
-          const playDuration = currentTime - trackStartTime;
-          
-          // Improved skip detection based on actual track duration and playback position
-          let wasSkipped = false;
-          
-          if (lastTrackDuration > 0) {
-            // We have duration info - use position-based detection
-            const completionPercentage = lastTrackPosition > 0 ? (lastTrackPosition / lastTrackDuration) * 100 : 0;
-            const wasNearEnd = completionPercentage > 85; // Within 15% of the end
-            const wasVeryShort = playDuration < 10000; // Less than 10 seconds
-            
-            // Skip if: very short play time OR not near the end
-            wasSkipped = wasVeryShort || !wasNearEnd;
-            
-            dbg('🎯 Track completion analysis', {
-              playDuration: `${Math.round(playDuration / 1000)}s`,
-              trackDuration: `${Math.round(lastTrackDuration / 1000)}s`,
-              completionPercentage: `${completionPercentage.toFixed(1)}%`,
-              wasNearEnd,
-              wasVeryShort,
-              wasSkipped
-            });
-          } else {
-            // No duration info - use time-based detection with shorter threshold
-            wasSkipped = playDuration < 15000; // Less than 15 seconds = skip
-            
-            dbg('🎯 Track completion analysis (no duration)', {
-              playDuration: `${Math.round(playDuration / 1000)}s`,
-              wasSkipped
-            });
-          }
-          
-          dbg('Track end analysis', {
-            playDuration: `${Math.round(playDuration / 1000)}s`,
-            wasSkipped,
-            hadDurationInfo: lastTrackDuration > 0,
-            lastPosition: lastTrackPosition,
-            lastDuration: lastTrackDuration
-          });
-
-          handleTrackEnd(lastTrackId, wasSkipped);
+        // After processing the first track, mark that we're no longer on the first track
+        if (tracking.isFirstTrack) {
+          tracking.isFirstTrack = false;
+          dbg('🎵 First track processed');
         }
-
-        lastTrackId = currentTrack.id;
-        trackStartTime = currentTime;
-        lastTrackDuration = state.duration || 0;
-        lastTrackPosition = state.position || 0;
-
-        // Set up completion timeout for this track
-        if (lastTrackDuration > 0) {
-          // Clear any existing timeout
-          if (trackCompletionTimeout) {
-            clearTimeout(trackCompletionTimeout);
-          }
-          
-          // Set timeout to detect completion if track change doesn't fire
-          const remainingTime = Math.max(0, lastTrackDuration - lastTrackPosition);
-          trackCompletionTimeout = setTimeout(() => {
-            dbg('⏰ Track completion timeout - marking as played fully', {
-              trackId: lastTrackId,
-              duration: lastTrackDuration,
-              position: lastTrackPosition
-            });
-            if (lastTrackId) {
-              handleTrackEnd(lastTrackId, false); // Mark as completed, not skipped
-            }
-          }, remainingTime + 2000); // Add 2 seconds buffer
+        
+        // Mark game as initialized after the first track is processed
+        if (!tracking.gameInitialized) {
+          tracking.gameInitialized = true;
+          dbg('🎮 Game initialized - track tracking is now active');
         }
 
         // For the first track, also check if it's paused and resume it
-        if (lastTrackId === currentTrack.id && state.paused) {
+        if (tracking.lastTrackId === currentTrack.id && playbackState.paused) {
           dbg('⚠️ First track is paused - resuming automatically...');
           if (player) {
             player.resume().then(() => {
@@ -153,30 +105,9 @@ export function useTrackEvents(player: Spotify.Player | null) {
           }
         }
       } else {
-        // Same track, update position info for better skip detection
-        lastTrackPosition = state.position || 0;
-        lastTrackDuration = state.duration || 0;
-        
-        // Update completion timeout if we have duration info
-        if (lastTrackDuration > 0 && lastTrackId) {
-          // Clear existing timeout
-          if (trackCompletionTimeout) {
-            clearTimeout(trackCompletionTimeout);
-          }
-          
-          // Set new timeout based on current position
-          const remainingTime = Math.max(0, lastTrackDuration - lastTrackPosition);
-          trackCompletionTimeout = setTimeout(() => {
-            dbg('⏰ Track completion timeout - marking as played fully', {
-              trackId: lastTrackId,
-              duration: lastTrackDuration,
-              position: lastTrackPosition
-            });
-            if (lastTrackId) {
-              handleTrackEnd(lastTrackId, false); // Mark as completed, not skipped
-            }
-          }, remainingTime + 2000); // Add 2 seconds buffer
-        }
+        // Same track, update position info
+        tracking.lastTrackPosition = playbackState.position || 0;
+        tracking.lastTrackDuration = playbackState.duration || 0;
       }
     };
 
@@ -184,12 +115,20 @@ export function useTrackEvents(player: Spotify.Player | null) {
 
     return () => {
       player.removeListener('player_state_changed', handlePlayerStateChanged);
-      if (trackCompletionTimeout) {
-        clearTimeout(trackCompletionTimeout);
-        trackCompletionTimeout = null;
+      if (tracking.trackCompletionTimeout) {
+        clearTimeout(tracking.trackCompletionTimeout);
+        tracking.trackCompletionTimeout = null;
       }
     };
   }, [player, dispatch]);
+
+  // Log vidas cuando cambien
+  useEffect(() => {
+    if (state.status === 'playing') {
+      console.log(`💖 Vidas disponibles: ${state.lives}`);
+      dbg(`💖 Vidas disponibles: ${state.lives}`);
+    }
+  }, [state.lives, state.status]);
 
   useEffect(() => {
     if (!player) return;

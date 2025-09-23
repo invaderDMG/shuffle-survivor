@@ -1,18 +1,26 @@
 import { useContext } from 'react';
 import { PlayerCtx } from '../../spotify/PlayerProvider';
+import { useGame } from '../../game/GameProvider';
 import { dbg } from '../../utils/debug';
 
 export default function SkipControls() {
   const player = useContext(PlayerCtx);
+  const { dispatch, state } = useGame();
 
   const handleSkipNext = async () => {
     if (!player) return;
     
     try {
-      // Solo hacer skip al siguiente track
-      // useTrackEvents se encargará de detectar el cambio y disparar TRACK_END
+      // Disparar acción TRACK_END con skipped: true para reducir vidas ANTES del skip
+      dispatch({
+        type: 'TRACK_END',
+        skipped: true,
+        trackId: state.lastTrackId || 'unknown'
+      });
+      dbg('⏭️ User skipped to next track - life lost');
+      
+      // Hacer skip al siguiente track
       await player.nextTrack();
-      dbg('⏭️ User skipped to next track');
     } catch (err) {
       dbg('❌ Skip next error', err);
     }
