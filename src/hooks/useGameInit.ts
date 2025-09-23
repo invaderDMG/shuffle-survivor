@@ -48,18 +48,15 @@ export function useGameInit() {
         setInitState({ status: 'loading', message: 'Setting up device...' });
         return false;
       }
-  
-      // 4. Verificar si ya tenemos playlist
+
+      // 3.5. Log device ID y verificar playlist existente
+      console.log('3️⃣ Device ID obtenido:', deviceId);
       const existingPlaylist = sessionStorage.getItem('playlist_name');
       const existingPlaylistUri = sessionStorage.getItem('game_playlist_uri');
-      const existingPlaylistImage = sessionStorage.getItem('playlist_image');
-      
-      dbg('🔍 Checking existing playlist data:', {
-        name: existingPlaylist,
-        uri: existingPlaylistUri,
-        image: existingPlaylistImage
-      });
-      
+      console.log('📚 Playlist existente:', existingPlaylist || 'Ninguna');
+      console.log('🔗 Playlist URI existente:', existingPlaylistUri || 'Ninguna');
+
+      // 4. Verificar si ya tenemos playlist
       if (!existingPlaylist) {
         console.log('4️⃣ No playlist');
         loadPlaylist();
@@ -68,13 +65,6 @@ export function useGameInit() {
       // 5. Si llegamos aquí, necesitamos inicializar playlist
       const hasPlaylistData = sessionStorage.getItem('game_playlist_uri') && 
                        sessionStorage.getItem('playlist_name');
-
-      dbg('🔍 Checking if playlist is fully initialized:', {
-        hasUri: !!sessionStorage.getItem('game_playlist_uri'),
-        hasName: !!sessionStorage.getItem('playlist_name'),
-        hasImage: !!sessionStorage.getItem('playlist_image'),
-        isFullyInitialized: !!hasPlaylistData
-      });
 
       if (!hasPlaylistData) {
         console.log('5️⃣ No initialized playlist');
