@@ -12,7 +12,6 @@ export function useTrackEvents(player: Spotify.Player | null) {
     lastTrackDuration: 0,
     lastTrackPosition: 0,
     trackCompletionTimeout: null as ReturnType<typeof setTimeout> | null,
-    isFirstTrack: true,
     gameInitialized: false
   });
 
@@ -27,7 +26,6 @@ export function useTrackEvents(player: Spotify.Player | null) {
         lastTrackDuration: 0,
         lastTrackPosition: 0,
         trackCompletionTimeout: null,
-        isFirstTrack: true,
         gameInitialized: false
       };
     } else if (state.status === 'playing') {
@@ -81,29 +79,12 @@ export function useTrackEvents(player: Spotify.Player | null) {
         tracking.lastTrackDuration = playbackState.duration || 0;
         tracking.lastTrackPosition = playbackState.position || 0;
         
-        // After processing the first track, mark that we're no longer on the first track
-        if (tracking.isFirstTrack) {
-          tracking.isFirstTrack = false;
-          dbg('🎵 First track processed');
-        }
-        
         // Mark game as initialized after the first track is processed
         if (!tracking.gameInitialized) {
           tracking.gameInitialized = true;
           dbg('🎮 Game initialized - track tracking is now active');
         }
 
-        // For the first track, also check if it's paused and resume it
-        if (tracking.lastTrackId === currentTrack.id && playbackState.paused) {
-          dbg('⚠️ First track is paused - resuming automatically...');
-          if (player) {
-            player.resume().then(() => {
-              dbg('✅ First track resumed successfully');
-            }).catch((err: any) => {
-              dbg('❌ Error resuming first track:', err);
-            });
-          }
-        }
       } else {
         // Same track, update position info
         tracking.lastTrackPosition = playbackState.position || 0;
