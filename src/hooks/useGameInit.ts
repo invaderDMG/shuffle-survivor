@@ -104,7 +104,45 @@ export function useGameInit() {
   
       dbg('✅ Playback transferred to device');
   
-      // 2. Obtener playlists del usuario
+      // 2. Verificar si hay playlist de pruebas configurada
+      const testPlaylistId = import.meta.env.VITE_TEST_PLAYLIST_ID;
+      
+      if (testPlaylistId) {
+        dbg('🧪 Using test playlist from environment variable:', testPlaylistId);
+        
+        // Obtener información de la playlist de pruebas
+        const testPlaylistResponse = await fetch(`https://api.spotify.com/v1/playlists/${testPlaylistId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        
+        if (!testPlaylistResponse.ok) {
+          throw new Error(`Failed to fetch test playlist: ${testPlaylistResponse.status}`);
+        }
+        
+        const testPlaylist = await testPlaylistResponse.json();
+        
+        dbg('🧪 Test playlist loaded:', testPlaylist.name);
+        
+        // Activar shuffle mode
+        await fetch('https://api.spotify.com/v1/me/player/shuffle?state=true', {
+          method: 'PUT',
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        
+        dbg('🔀 Shuffle mode enabled');
+        
+        return {
+          uri: testPlaylist.uri,
+          name: testPlaylist.name,
+          image: testPlaylist.images[0]?.url || '',
+          trackCount: testPlaylist.tracks?.total || 0
+        };
+      }
+  
+      // 3. Si no hay playlist de pruebas, usar lógica normal
+      dbg('📚 Loading playlists from Spotify...');
+      
+      // 4. Obtener playlists del usuario
       const playlistsResponse = await fetch('https://api.spotify.com/v1/me/playlists?limit=50', {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -120,12 +158,12 @@ export function useGameInit() {
   
       dbg(`📚 Found ${items.length} playlists`);
   
-      // 3. Seleccionar playlist aleatoria
+      // 5. Seleccionar playlist aleatoria
       const selectedPlaylist = items[Math.floor(Math.random() * items.length)];
       
       dbg('�� Selected random playlist:', selectedPlaylist.name);
   
-      // 4. Activar shuffle mode
+      // 6. Activar shuffle mode
       await fetch('https://api.spotify.com/v1/me/player/shuffle?state=true', {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}` },
@@ -133,7 +171,7 @@ export function useGameInit() {
   
       dbg('🔀 Shuffle mode enabled');
   
-      // 5. Retornar datos de la playlist
+      // 7. Retornar datos de la playlist
       return {
         uri: selectedPlaylist.uri,
         name: selectedPlaylist.name,
