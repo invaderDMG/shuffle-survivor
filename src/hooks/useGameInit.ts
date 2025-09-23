@@ -51,6 +51,15 @@ export function useGameInit() {
   
       // 4. Verificar si ya tenemos playlist
       const existingPlaylist = sessionStorage.getItem('playlist_name');
+      const existingPlaylistUri = sessionStorage.getItem('game_playlist_uri');
+      const existingPlaylistImage = sessionStorage.getItem('playlist_image');
+      
+      dbg('🔍 Checking existing playlist data:', {
+        name: existingPlaylist,
+        uri: existingPlaylistUri,
+        image: existingPlaylistImage
+      });
+      
       if (!existingPlaylist) {
         console.log('4️⃣ No playlist');
         loadPlaylist();
@@ -59,6 +68,13 @@ export function useGameInit() {
       // 5. Si llegamos aquí, necesitamos inicializar playlist
       const hasPlaylistData = sessionStorage.getItem('game_playlist_uri') && 
                        sessionStorage.getItem('playlist_name');
+
+      dbg('🔍 Checking if playlist is fully initialized:', {
+        hasUri: !!sessionStorage.getItem('game_playlist_uri'),
+        hasName: !!sessionStorage.getItem('playlist_name'),
+        hasImage: !!sessionStorage.getItem('playlist_image'),
+        isFullyInitialized: !!hasPlaylistData
+      });
 
       if (!hasPlaylistData) {
         console.log('5️⃣ No initialized playlist');
@@ -106,6 +122,7 @@ export function useGameInit() {
   
       // 2. Verificar si hay playlist de pruebas configurada
       const testPlaylistId = import.meta.env.VITE_TEST_PLAYLIST_ID;
+      dbg('🧪 Test playlist ID:', testPlaylistId);
       
       if (testPlaylistId) {
         dbg('🧪 Using test playlist from environment variable:', testPlaylistId);
